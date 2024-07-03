@@ -13,7 +13,6 @@ import (
 type config struct {
 	port int
 	env  string
-	api  string
 	db   struct {
 		dsn string
 	}
@@ -21,6 +20,14 @@ type config struct {
 		secret string
 		key    string
 	}
+}
+
+// Application
+type application struct {
+	config   config
+	infoLog  *log.Logger
+	errorLog *log.Logger
+	version  string
 }
 
 // Serve
@@ -39,21 +46,13 @@ func (app *application) serve() error {
 	return srv.ListenAndServe()
 }
 
-// Application
-type application struct {
-	config   config
-	infoLog  *log.Logger
-	errorLog *log.Logger
-	version  string
-}
-
 func main() {
 	var cfg config
 
 	// flags for command line arguments
 	// i.e. go run main.go -port=8000 -env=production -api=http://example.com/api
 	// if not provided defaults will be chosen from the ones provided here
-	flag.IntVar(&cfg.port, "port", 4000, "Server port to listen on")
+	flag.IntVar(&cfg.port, "port", 6060, "Server port to listen on")
 	flag.StringVar(&cfg.env, "env", "development", "Application environment {development|production|maintenance}")
 
 	flag.Parse()
@@ -64,11 +63,13 @@ func main() {
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	version := "1.0"
 
 	app := &application{
 		config:   cfg,
 		infoLog:  infoLog,
 		errorLog: errorLog,
+		version:  version,
 	}
 
 	err := app.serve()
