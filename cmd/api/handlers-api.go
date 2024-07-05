@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/darkphotonKN/virtual-credit-card-server/internal/cards"
 )
@@ -28,6 +28,7 @@ func (app *application) GetPaymentIntent(w http.ResponseWriter, r *http.Request)
 
 	// get body from request
 	body := r.Body
+
 	// decode from json into the stripePayload
 	err := json.NewDecoder(body).Decode(&payload) // reference to update payload variable
 	// this is required because passing it directly would be a copy and the original would be
@@ -37,14 +38,10 @@ func (app *application) GetPaymentIntent(w http.ResponseWriter, r *http.Request)
 		app.errorLog.Println("Error when decoding json payload:", err)
 		// TODO: send error response back to user
 	}
+	log.Println("body of request, decoded into payload:", payload)
 
 	// get the amount passed in from payload
-	amount, err := strconv.Atoi(payload.Amount)
-
-	if err != nil {
-		app.errorLog.Println("Error when converting amount (string) to amount (int).", err)
-		// TODO: send error response back to user
-	}
+	amount := payload.Amount
 
 	card := cards.Card{
 		Secret:   app.config.stripe.secret,
@@ -54,7 +51,7 @@ func (app *application) GetPaymentIntent(w http.ResponseWriter, r *http.Request)
 
 	okay := true
 
-	pi, msg, err := card.CreatePaymentIntent(payload.Currency, amount)
+	pi, msg, err := card.Charge(payload.Currency, amount)
 
 	if err != nil {
 		okay = false

@@ -4,6 +4,8 @@ package cards
 import (
 	"github.com/stripe/stripe-go/v72"
 	"github.com/stripe/stripe-go/v72/paymentintent"
+	"log"
+	"strconv"
 )
 
 type Card struct {
@@ -20,22 +22,30 @@ type Transaction struct {
 	BankReturnCode      string
 }
 
-func (c *Card) Charge(currency string, amount int) (*stripe.PaymentIntent, string, error) {
+func (c *Card) Charge(currency string, amount string) (*stripe.PaymentIntent, string, error) {
 	return c.CreatePaymentIntent(currency, amount)
 }
 
 // Creating Payment Intent for Stripe
-func (c *Card) CreatePaymentIntent(currency string, amount int) (*stripe.PaymentIntent, string, error) {
+func (c *Card) CreatePaymentIntent(currency string, amount string) (*stripe.PaymentIntent, string, error) {
 	stripe.Key = c.Secret
+
+	log.Println("amount:", amount)
+	log.Println("currency", currency)
+	amountInt, err := strconv.ParseInt(amount, 10, 64)
+
+	if err != nil {
+		log.Println("Error when converting amount to int", err)
+	}
 
 	// create payment intent
 	params := &stripe.PaymentIntentParams{
-		Amount:   stripe.Int64(int64(amount)),
+		Amount:   stripe.Int64(amountInt),
 		Currency: stripe.String(currency),
 	}
 
 	// add extra meta data for the transaction
-	params.AddMetadata("key", "value")
+	// params.AddMetadata("key", "value")
 
 	pi, err := paymentintent.New(params)
 
@@ -66,5 +76,4 @@ func cardErrorMessage(code stripe.ErrorCode) string {
 	}
 
 	return msg
-
 }

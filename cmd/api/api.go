@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 // Config
@@ -47,6 +49,11 @@ func (app *application) serve() error {
 }
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
 	var cfg config
 
 	// flags for command line arguments
@@ -60,6 +67,7 @@ func main() {
 	cfg.stripe.key = os.Getenv("STRIPE_KEY")
 	fmt.Println("stripe key from env:", cfg.stripe.key)
 	cfg.stripe.secret = os.Getenv("STRIPE_SECRET")
+	fmt.Println("stripe secret from env:", cfg.stripe.secret)
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
@@ -72,10 +80,9 @@ func main() {
 		version:  version,
 	}
 
-	err := app.serve()
+	err = app.serve()
 
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }
