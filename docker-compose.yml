@@ -1,0 +1,18 @@
+version: "3.1"
+
+services:
+  db:
+    image: mysql:latest
+    container_name: virtual-terminal-db
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: virtual_terminal_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 123456
+    ports:
+      - "3307:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:

@@ -2,10 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/darkphotonKN/virtual-credit-card-server/internal/cards"
 	"log"
 	"net/http"
-
-	"github.com/darkphotonKN/virtual-credit-card-server/internal/cards"
 )
 
 // getting from client

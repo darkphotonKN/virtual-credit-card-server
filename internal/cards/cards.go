@@ -2,10 +2,12 @@
 package cards
 
 import (
+	"log"
+	"os"
+	"strconv"
+
 	"github.com/stripe/stripe-go/v72"
 	"github.com/stripe/stripe-go/v72/paymentintent"
-	"log"
-	"strconv"
 )
 
 type Card struct {

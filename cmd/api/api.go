@@ -3,11 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/darkphotonKN/virtual-credit-card-server/internal/driver"
+	"github.com/joho/godotenv"
 )
 
 // Config
@@ -60,6 +62,8 @@ func main() {
 	// if not provided defaults will be chosen from the ones provided here
 	flag.IntVar(&cfg.port, "port", 6060, "Server port to listen on")
 	flag.StringVar(&cfg.env, "env", "development", "Application environment {development|production|maintenance}")
+	// database information
+	flag.StringVar(&cfg.db.dsn, "dsn", "root:123456@tcp(localhost:3307)/virtual_terminal_db?parseTime=true&tls=false", "DSN")
 
 	flag.Parse()
 
@@ -71,6 +75,16 @@ func main() {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 	version := "1.0"
+
+	// attempt to connect to the database
+	conn, err := driver.OpenDB(cfg.db.dsn)
+
+	if err != nil {
+		log.Fatal("DB could not be connected to.")
+	}
+
+	// close connection if function ends (server stops)
+	defer conn.Close()
 
 	app := &application{
 		config:   cfg,
