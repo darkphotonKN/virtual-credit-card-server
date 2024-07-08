@@ -42,6 +42,8 @@ func (app *application) GetPaymentIntent(w http.ResponseWriter, r *http.Request)
 	// get the amount passed in from payload
 	amount := payload.Amount
 
+	log.Println("Amount:", amount)
+
 	card := cards.Card{
 		Secret:   app.config.stripe.secret,
 		Key:      app.config.stripe.key,
@@ -81,5 +83,4 @@ func (app *application) GetPaymentIntent(w http.ResponseWriter, r *http.Request)
 		}
 		w.Write(out)
 	}
-
 }

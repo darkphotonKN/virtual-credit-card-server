@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/darkphotonKN/virtual-credit-card-server/internal/driver"
+	"github.com/darkphotonKN/virtual-credit-card-server/internal/models"
 	"github.com/joho/godotenv"
 )
 
@@ -31,6 +32,7 @@ type application struct {
 	infoLog  *log.Logger
 	errorLog *log.Logger
 	version  string
+	DB       models.DBModel
 }
 
 // Serve
@@ -83,6 +85,8 @@ func main() {
 		log.Fatal("DB could not be connected to.")
 	}
 
+	fmt.Println("DB connected.")
+
 	// close connection if function ends (server stops)
 	defer conn.Close()
 
@@ -91,6 +95,7 @@ func main() {
 		infoLog:  infoLog,
 		errorLog: errorLog,
 		version:  version,
+		DB:       models.DBModel{DB: conn},
 	}
 
 	err = app.serve()
