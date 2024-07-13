@@ -1,23 +1,20 @@
 package driver
 
 import (
-	"database/sql"
-	"fmt"
+	"log"
 
-	_ "github.com/go-sql-driver/mysql"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-func OpenDB(dsn string) (*sql.DB, error) {
+func OpenDB(dsn string) (*gorm.DB, error) {
 
-	db, err := sql.Open("mysql", dsn)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	log.Println("db:", db)
 
 	if err != nil {
+		log.Fatalf("Error when attemping to connect to the database:", err)
 		return nil, err
-	}
-
-	err = db.Ping() // verify db connection
-	if err != nil {
-		fmt.Println("Error when attemping to connect to the database:", err)
 	}
 
 	return db, err

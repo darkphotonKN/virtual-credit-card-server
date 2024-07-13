@@ -65,7 +65,7 @@ func main() {
 	flag.IntVar(&cfg.port, "port", 6060, "Server port to listen on")
 	flag.StringVar(&cfg.env, "env", "development", "Application environment {development|production|maintenance}")
 	// database information
-	flag.StringVar(&cfg.db.dsn, "dsn", "root:123456@tcp(localhost:3307)/virtual_terminal_db?parseTime=true&tls=false", "DSN")
+	flag.StringVar(&cfg.db.dsn, "dsn", "root:12456@tcp(localhost:3307)/virtual_terminal_db?parseTime=true&tls=false", "DSN")
 
 	flag.Parse()
 
@@ -78,8 +78,8 @@ func main() {
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 	version := "1.0"
 
-	// attempt to connect to the database
-	conn, err := driver.OpenDB(cfg.db.dsn)
+	// Connecting to DB with gorm
+	db, err := driver.OpenDB(cfg.db.dsn)
 
 	if err != nil {
 		log.Fatal("DB could not be connected to.")
@@ -87,15 +87,12 @@ func main() {
 
 	fmt.Println("DB connected.")
 
-	// close connection if function ends (server stops)
-	defer conn.Close()
-
 	app := &application{
 		config:   cfg,
 		infoLog:  infoLog,
 		errorLog: errorLog,
 		version:  version,
-		DB:       models.DBModel{DB: conn},
+		DB:       models.DBModel{DB: db},
 	}
 
 	err = app.serve()

@@ -29,8 +29,7 @@ func (app *application) GetPaymentIntent(w http.ResponseWriter, r *http.Request)
 	body := r.Body
 
 	// decode from json into the stripePayload
-	err := json.NewDecoder(body).Decode(&payload) // reference to update payload variable
-	// this is required because passing it directly would be a copy and the original would be
+	err := json.NewDecoder(body).Decode(&payload) // reference to update payload variable this is required because passing it directly would be a copy and the original would be
 	// unchanged
 
 	if err != nil {
