@@ -65,7 +65,7 @@ func main() {
 	flag.IntVar(&cfg.port, "port", 6060, "Server port to listen on")
 	flag.StringVar(&cfg.env, "env", "development", "Application environment {development|production|maintenance}")
 	// database information
-	flag.StringVar(&cfg.db.dsn, "dsn", "root:12456@tcp(localhost:3307)/virtual_terminal_db?parseTime=true&tls=false", "DSN")
+	flag.StringVar(&cfg.db.dsn, "dsn", "root:123456@tcp(localhost:3307)/virtual_terminal_db?parseTime=true&tls=false", "DSN")
 
 	flag.Parse()
 
@@ -87,6 +87,13 @@ func main() {
 
 	fmt.Println("DB connected.")
 
+	// auto migration for tables
+	err = db.AutoMigrate(&models.Product{})
+
+	if err != nil {
+		log.Fatalf("Could not initialize DB table products.")
+	}
+
 	app := &application{
 		config:   cfg,
 		infoLog:  infoLog,
@@ -100,4 +107,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	db.AutoMigrate(&models.Product{})
 }

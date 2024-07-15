@@ -21,8 +21,12 @@ func (app *application) routes() http.Handler {
 		MaxAge:           300,
 	}))
 
-	// Payment Intent Route
+	// Card Routes
 	mux.Post("/api/payment-intent", app.GetPaymentIntent)
+
+	// Product Routes
+	mux.Post("/api/product/purchase", app.ProductPurchase)
+	mux.Get("/api/product", app.GetProductRecords)
 
 	return mux
 

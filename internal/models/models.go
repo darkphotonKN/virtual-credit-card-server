@@ -26,13 +26,20 @@ func NewModels(db *gorm.DB) Models {
 }
 
 // Model for Product in DB
-type Product struct {
-	ID             int       `json:"id"`
-	Name           string    `json:"name"`
-	InventoryLevel int       `json:"inventory-level"`
-	Price          int       `json:"price"`
-	CreatedAt      time.Time `json:"-"`
-	UpdatedAt      time.Time `json:"-"`
-}
+// type Product struct {
+// 	ID             int       `json:"id"`
+// 	Name           string    `json:"name"`
+// 	InventoryLevel int       `json:"inventory-level"`
+// 	Price          int       `json:"price"`
+// 	CreatedAt      time.Time `json:"-"`
+// 	UpdatedAt      time.Time `json:"-"`
+// }
 
-// Add a method for querying the DB for Products
+type Product struct {
+	ID             uint      `gorm: "primaryKey" json:"id"`
+	Name           string    `json:"name"`
+	InventoryLevel string    `json:"inventory_level"`
+	Price          int       `json:"price"`
+	CreatedAt      time.Time `json:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at"`
+}
